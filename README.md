@@ -1,14 +1,17 @@
-package com.alibou.batch.config;
+package com.ivr.batch.config;
 
-import com.alibou.batch.launcher.CustomJobLauncher;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -18,19 +21,18 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfig {
 
-    private final DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
-    public BatchConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    @Autowired
+    private Environment env;
 
     @Bean
     public JobRepository jobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(dataSource);
         factory.setTransactionManager(transactionManager());
-        factory.setTablePrefix("COPS_BATCH_");
-        factory.afterPropertiesSet();
+        factory.setDatabaseType(env.getProperty("spring.batch.database-type"));
         return factory.getObject();
     }
 
@@ -40,46 +42,19 @@ public class BatchConfig {
     }
 
     @Bean
-    public JobLauncher jobLauncher(JobRepository jobRepository) {
-        return new CustomJobLauncher(jobRepository);
-    }
-
-    @Bean
     public JobExplorer jobExplorer() throws Exception {
         JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
         factory.setDataSource(dataSource);
-        factory.setTablePrefix("COPS_BATCH_");
-        factory.afterPropertiesSet();
         return factory.getObject();
     }
 
-}
-
-
-
-package com.alibou.batch.launcher;
-
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-@Component
-public class CustomJobLauncher implements JobLauncher {
-
-    private final JobRepository jobRepository;
-
-    @Autowired
-    public CustomJobLauncher(JobRepository jobRepository) {
-        this.jobRepository = jobRepository;
+    @Bean
+    public JobBuilderFactory jobBuilderFactory(JobRepository jobRepository) {
+        return new JobBuilderFactory(jobRepository);
     }
 
-    @Override
-    public JobExecution run(Job job, JobParameters jobParameters) throws Exception {
-        return jobRepository.createJobExecution(job.getName(), jobParameters);
+    @Bean
+    public StepBuilderFactory stepBuilderFactory(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilderFactory(jobRepository, transactionManager);
     }
 }
-
