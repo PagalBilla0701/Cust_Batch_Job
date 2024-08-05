@@ -14,10 +14,12 @@ public class BatchConfig {
     }
 
     @Bean
-    public JobLauncher jobLauncher(JobRepository jobRepository) {
-        SimpleJobLauncher launcher = new SimpleJobLauncher();
-        launcher.setJobRepository(jobRepository);
-        return launcher;
+    public JobLauncher jobLauncher(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws Exception {
+        JobLauncherFactoryBean factory = new JobLauncherFactoryBean();
+        factory.setJobRepository(jobRepository);
+        factory.setTransactionManager(transactionManager);
+        factory.afterPropertiesSet();
+        return factory.getObject();
     }
 
     @Bean
