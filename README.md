@@ -1,5 +1,53 @@
 package com.alibou.batch.config;
 
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
+
+@Configuration
+@Import(DataSourceConfig.class)
+public class BatchInfraConfig {
+
+    @Autowired
+    @Qualifier("dataSource")
+    private DataSource dataSource;
+
+    @Bean("jobRepository")
+    public JobRepository createJobRepository() throws Exception {
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setTransactionManager(transactionManager());
+        factory.setTablePrefix("COPS_BATCH_");
+        factory.afterPropertiesSet();
+        return factory.getObject();
+    }
+
+    @Bean("jobLauncher")
+    public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+        TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
+
+
+    @Bean(name = "batchTransactionManager")
+    public PlatformTransactionManager transactionManager() {
+        return new ResourcelessTransactionManager();
+    }
+}
+package com.alibou.batch.config;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
