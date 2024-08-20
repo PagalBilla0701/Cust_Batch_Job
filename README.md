@@ -1,188 +1,93 @@
-package com.alibou.batch.service;
+Here are the 10 story points with descriptions and acceptance criteria based on your tasks:
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
+### **Story 1: Refactor IVR Custom Reports API - Part 1**
+**Description:**
+Refactor the existing IVR custom reports API to improve code structure, performance, and maintainability. This includes separating concerns and optimizing the current logic.
 
-import java.util.Map;
+**Acceptance Criteria:**
+- The IVR custom reports API is refactored and organized according to best practices.
+- All existing functionalities are preserved and fully operational.
+- Unit tests are updated or created to cover the refactored code.
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+### **Story 2: Refactor IVR Custom Reports API - Part 2**
+**Description:**
+Continue refactoring the IVR custom reports API, focusing on adding new features or optimizations identified during the initial refactoring.
 
-@ExtendWith(MockitoExtension.class)
-class BatchServiceTest {
+**Acceptance Criteria:**
+- Additional features or optimizations are implemented in the IVR custom reports API.
+- No regressions are introduced.
+- Unit tests are comprehensive and pass successfully.
 
-    @Mock
-    private JobLauncher mockJobLauncher;
+### **Story 3: Backend Integration for Transfer Call - Development**
+**Description:**
+Develop the backend integration for handling transfer calls within the IVR system. This includes setting up necessary endpoints, services, and data handling.
 
-    @Mock
-    private Job kycIndicatorsJob;
+**Acceptance Criteria:**
+- Transfer call backend integration is completed.
+- Endpoints are tested for functionality.
+- Proper error handling and logging are implemented.
 
-    @Mock
-    private Job transferExclusionJob;
+### **Story 4: Backend Integration for Transfer Call - Unit Tests**
+**Description:**
+Write unit tests for the transfer call backend integration to ensure the logic and data handling work as expected.
 
-    @Mock
-    private Job sensitiveCustomerJob;
+**Acceptance Criteria:**
+- Unit tests are written for all relevant methods and endpoints.
+- Tests cover various scenarios including success, failure, and edge cases.
+- All tests pass successfully.
 
-    @Mock
-    private Job rbsCustomerJob;
+### **Story 5: Backend Integration for Conference Call - Development**
+**Description:**
+Develop the backend integration for handling conference calls within the IVR system. This involves creating the necessary logic, endpoints, and services.
 
-    @InjectMocks
-    private BatchService batchServiceUnderTest;
+**Acceptance Criteria:**
+- Conference call backend integration is completed.
+- Endpoints are tested and verified.
+- Logging and error handling are implemented according to best practices.
 
-    @Test
-    void testImportKycIndicators() throws Exception {
-        batchServiceUnderTest.importKycIndicators();
-        verify(mockJobLauncher).run(any(Job.class),
-                eq(new JobParameters(Map.ofEntries(Map.entry("startAt", new JobParameter<>(null, Long.class)),
-                        Map.entry("jobName", new JobParameter<>("KYC Indicators", String.class))))));
-    }
+### **Story 6: Backend Integration for Conference Call - Unit Tests**
+**Description:**
+Write unit tests for the conference call backend integration to ensure robust handling of conference call scenarios.
 
-    @Test
-    void testImportKycIndicators_JobLauncherThrowsJobExecutionAlreadyRunningException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobExecutionAlreadyRunningException.class);
-        batchServiceUnderTest.importKycIndicators();
-    }
+**Acceptance Criteria:**
+- Comprehensive unit tests are created for conference call functionality.
+- Tests include various conference call scenarios, including edge cases.
+- All unit tests pass successfully.
 
-    @Test
-    void testImportKycIndicators_JobLauncherThrowsJobRestartException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobRestartException.class);
-        batchServiceUnderTest.importKycIndicators();
-    }
+### **Story 7: File Upload to CEMS_AUDIT_LOG Entity - Development**
+**Description:**
+Develop the functionality to upload files to the `CEMS_AUDIT_LOG` entity. This includes creating the upload logic, mapping the data, and storing the information correctly in the database.
 
-    @Test
-    void testImportKycIndicators_JobLauncherThrowsJobInstanceAlreadyCompleteException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobInstanceAlreadyCompleteException.class);
-        batchServiceUnderTest.importKycIndicators();
-    }
+**Acceptance Criteria:**
+- File upload functionality is implemented and integrated with the `CEMS_AUDIT_LOG` entity.
+- Uploaded files are stored and mapped correctly in the database.
+- Proper validation and error handling are in place.
 
-    @Test
-    void testImportKycIndicators_JobLauncherThrowsJobParametersInvalidException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobParametersInvalidException.class);
-        batchServiceUnderTest.importKycIndicators();
-    }
+### **Story 8: File Upload to CEMS_AUDIT_LOG Entity - Unit Tests**
+**Description:**
+Write unit tests to validate the file upload functionality to the `CEMS_AUDIT_LOG` entity.
 
-    @Test
-    void testImportTransferExclusion() throws Exception {
-        batchServiceUnderTest.importTransferExclusion();
-        verify(mockJobLauncher).run(any(Job.class),
-                eq(new JobParameters(Map.ofEntries(Map.entry("startAt", new JobParameter<>(null, Long.class)),
-                        Map.entry("jobName", new JobParameter<>("Transfer Exclusion", String.class))))));
-    }
+**Acceptance Criteria:**
+- Unit tests are created for file upload operations.
+- Tests cover different file formats, sizes, and possible errors.
+- All tests pass successfully.
 
-    @Test
-    void testImportTransferExclusion_JobLauncherThrowsJobExecutionAlreadyRunningException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobExecutionAlreadyRunningException.class);
-        batchServiceUnderTest.importTransferExclusion();
-    }
+### **Story 9: Use Uploaded File in Batch Job - Development**
+**Description:**
+Develop the logic to pick up the file uploaded to the `CEMS_AUDIT_LOG` table and utilize it in a batch job. This includes reading the file, processing its contents, and updating related entities.
 
-    @Test
-    void testImportTransferExclusion_JobLauncherThrowsJobRestartException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobRestartException.class);
-        batchServiceUnderTest.importTransferExclusion();
-    }
+**Acceptance Criteria:**
+- Logic to read and process the uploaded file in a batch job is implemented.
+- Batch job correctly updates relevant entities based on file content.
+- The process is efficient and handles errors gracefully.
 
-    @Test
-    void testImportTransferExclusion_JobLauncherThrowsJobInstanceAlreadyCompleteException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobInstanceAlreadyCompleteException.class);
-        batchServiceUnderTest.importTransferExclusion();
-    }
+### **Story 10: Use Uploaded File in Batch Job - Unit Tests**
+**Description:**
+Write unit tests for the batch job that processes the file uploaded to the `CEMS_AUDIT_LOG` entity.
 
-    @Test
-    void testImportTransferExclusion_JobLauncherThrowsJobParametersInvalidException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobParametersInvalidException.class);
-        batchServiceUnderTest.importTransferExclusion();
-    }
+**Acceptance Criteria:**
+- Unit tests cover the entire file processing workflow in the batch job.
+- Tests include different scenarios, such as empty files, malformed data, and successful processing.
+- All tests pass without issues.
 
-    @Test
-    void testImportSensitiveCustomer() throws Exception {
-        batchServiceUnderTest.importSensitiveCustomer();
-        verify(mockJobLauncher).run(any(Job.class),
-                eq(new JobParameters(Map.ofEntries(Map.entry("startAt", new JobParameter<>(null, Long.class)),
-                        Map.entry("jobName", new JobParameter<>("Sensitive Customer", String.class))))));
-    }
-
-    @Test
-    void testImportSensitiveCustomer_JobLauncherThrowsJobExecutionAlreadyRunningException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobExecutionAlreadyRunningException.class);
-        batchServiceUnderTest.importSensitiveCustomer();
-    }
-
-    @Test
-    void testImportSensitiveCustomer_JobLauncherThrowsJobRestartException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobRestartException.class);
-        batchServiceUnderTest.importSensitiveCustomer();
-    }
-
-    @Test
-    void testImportSensitiveCustomer_JobLauncherThrowsJobInstanceAlreadyCompleteException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobInstanceAlreadyCompleteException.class);
-        batchServiceUnderTest.importSensitiveCustomer();
-    }
-
-    @Test
-    void testImportSensitiveCustomer_JobLauncherThrowsJobParametersInvalidException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobParametersInvalidException.class);
-        batchServiceUnderTest.importSensitiveCustomer();
-    }
-
-    @Test
-    void testImportRbsCustomer() throws Exception {
-        batchServiceUnderTest.importRbsCustomer();
-        verify(mockJobLauncher).run(any(Job.class),
-                eq(new JobParameters(Map.ofEntries(Map.entry("startAt", new JobParameter<>(null, Long.class)),
-                        Map.entry("jobName", new JobParameter<>("RBS Customer", String.class))))));
-    }
-
-    @Test
-    void testImportRbsCustomer_JobLauncherThrowsJobExecutionAlreadyRunningException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobExecutionAlreadyRunningException.class);
-        batchServiceUnderTest.importRbsCustomer();
-    }
-
-    @Test
-    void testImportRbsCustomer_JobLauncherThrowsJobRestartException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobRestartException.class);
-        batchServiceUnderTest.importRbsCustomer();
-    }
-
-    @Test
-    void testImportRbsCustomer_JobLauncherThrowsJobInstanceAlreadyCompleteException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobInstanceAlreadyCompleteException.class);
-        batchServiceUnderTest.importRbsCustomer();
-    }
-
-    @Test
-    void testImportRbsCustomer_JobLauncherThrowsJobParametersInvalidException() throws Exception {
-        when(mockJobLauncher.run(any(Job.class), any(JobParameters.class)))
-                .thenThrow(JobParametersInvalidException.class);
-        batchServiceUnderTest.importRbsCustomer();
-    }
-}
+These story points break down your tasks into manageable parts, each with clear objectives and success criteria.
