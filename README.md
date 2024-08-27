@@ -1,156 +1,200 @@
-Certainly! Below is the code for a Spring Boot API to handle the patch request as per your requirements:
+Sure, Kaushik! Here's a basic implementation for the Spring Boot API as per the given requirements.
 
-### 1. **Create the Controller**
+### Step 1: Create the Spring Boot Project
 
-```java
-package com.example.demo.controller;
+You can create a new Spring Boot project using Spring Initializr or directly in your IDE.
 
-import com.example.demo.service.CallActivityService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+### Step 2: Define the Entity
 
-@RestController
-public class CallActivityController {
-
-    private final CallActivityService callActivityService;
-
-    public CallActivityController(CallActivityService callActivityService) {
-        this.callActivityService = callActivityService;
-    }
-
-    @PatchMapping("/api/v1/update-call-activity")
-    public ResponseEntity<String> updateCallActivity(
-            @RequestHeader("call-ref-no") Long callRefNo,
-            @RequestHeader("country-code") String countryCode,
-            @RequestBody String secondFactorAuthentication) {
-
-        boolean isUpdated = callActivityService.updateCallActivity(callRefNo, countryCode, secondFactorAuthentication);
-
-        if (isUpdated) {
-            return ResponseEntity.ok("{\"status\":\"success\"}");
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"status\":\"failure\"}");
-        }
-    }
-}
-```
-
-### 2. **Create the Service**
-
-```java
-package com.example.demo.service;
-
-import com.example.demo.repository.CallActivityRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-public class CallActivityService {
-
-    private final CallActivityRepository callActivityRepository;
-
-    public CallActivityService(CallActivityRepository callActivityRepository) {
-        this.callActivityRepository = callActivityRepository;
-    }
-
-    @Transactional
-    public boolean updateCallActivity(Long callRefNo, String countryCode, String secondFactorAuthentication) {
-        int rowsUpdated = callActivityRepository.updateCustomField(callRefNo, countryCode, secondFactorAuthentication);
-        return rowsUpdated > 0;
-    }
-}
-```
-
-### 3. **Create the Repository**
-
-```java
-package com.example.demo.repository;
-
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface CallActivityRepository extends CrudRepository<CRMCallDispositionHist, Long> {
-
-    @Modifying
-    @Query("UPDATE CRMCallDispositionHist c SET c.xCustomField2Cti = :secondFactorAuthentication " +
-           "WHERE c.callRefNo = :callRefNo AND c.countryCode = :countryCode")
-    int updateCustomField(Long callRefNo, String countryCode, String secondFactorAuthentication);
-}
-```
-
-### 4. **Create the Entity**
+You will need to define an entity class representing the `CRM_CALL_DISPOSITION_HIST` table.
 
 ```java
 package com.example.demo.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "CRM_CALL_DISPOSITION_HIST")
-public class CRMCallDispositionHist {
-
+public class CallDispositionHist {
+    
     @Id
     private Long callRefNo;
-
-    @Column(name = "COUNTRY_CODE")
+    
     private String countryCode;
-
-    @Column(name = "X_CUSTOM_FIELD2_CTI")
     private String xCustomField2Cti;
-
+    
     // Getters and Setters
+    
     public Long getCallRefNo() {
         return callRefNo;
     }
-
+    
     public void setCallRefNo(Long callRefNo) {
         this.callRefNo = callRefNo;
     }
-
+    
     public String getCountryCode() {
         return countryCode;
     }
-
+    
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
-
+    
     public String getXCustomField2Cti() {
         return xCustomField2Cti;
     }
-
+    
     public void setXCustomField2Cti(String xCustomField2Cti) {
         this.xCustomField2Cti = xCustomField2Cti;
     }
 }
 ```
 
-### 5. **Application Properties**
+### Step 3: Define the Repository
 
-Ensure you have your database properties set correctly in the `application.properties` file:
+Create a repository interface to interact with the database.
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/CVD_DB
-spring.datasource.username=root
-spring.datasource.password=yourpassword
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.jpa.hibernate.ddl-auto=none
-spring.jpa.show-sql=true
+```java
+package com.example.demo.repository;
+
+import com.example.demo.entity.CallDispositionHist;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface CallDispositionHistRepository extends JpaRepository<CallDispositionHist, Long> {
+    
+    Optional<CallDispositionHist> findByCallRefNoAndCountryCode(Long callRefNo, String countryCode);
+}
 ```
 
-### 6. **Testing and Completion**
+### Step 4: Create the Service Layer
 
-Once you have developed the above, you can proceed to write the JUnit test cases. You can target the completion of JUnit tests by midday on 28th August.
+Create a service class to handle the business logic.
 
-Let me know if you encounter any issues while implementing this!
+```java
+package com.example.demo.service;
+
+import com.example.demo.entity.CallDispositionHist;
+import com.example.demo.repository.CallDispositionHistRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class CallDispositionService {
+
+    @Autowired
+    private CallDispositionHistRepository repository;
+
+    public String updateCustomField(Long callRefNo, String countryCode, String customFieldValue) {
+        Optional<CallDispositionHist> optionalRecord = repository.findByCallRefNoAndCountryCode(callRefNo, countryCode);
+        if (optionalRecord.isPresent()) {
+            CallDispositionHist record = optionalRecord.get();
+            record.setXCustomField2Cti(customFieldValue);
+            repository.save(record);
+            return "success";
+        } else {
+            return "failure";
+        }
+    }
+}
+```
+
+### Step 5: Create the Controller
+
+Create a controller to handle the patch request.
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.service.CallDispositionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/call-disposition")
+public class CallDispositionController {
+
+    @Autowired
+    private CallDispositionService service;
+
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateCustomField(
+            @RequestHeader("callRefNo") Long callRefNo,
+            @RequestHeader("countryCode") String countryCode,
+            @RequestBody String customFieldValue) {
+
+        String status = service.updateCustomField(callRefNo, countryCode, customFieldValue);
+        if ("success".equals(status)) {
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
+        }
+    }
+}
+```
+
+### Step 6: JUnit Test Cases (Target for 28th August)
+
+You can add test cases in a `CallDispositionControllerTest` class to ensure that the API works as expected.
+
+```java
+package com.example.demo.controller;
+
+import com.example.demo.service.CallDispositionService;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+public class CallDispositionControllerTest {
+
+    @InjectMocks
+    private CallDispositionController controller;
+
+    @Mock
+    private CallDispositionService service;
+
+    @Test
+    public void testUpdateCustomFieldSuccess() {
+        MockitoAnnotations.openMocks(this);
+        when(service.updateCustomField(123456L, "US", "Verified")).thenReturn("success");
+        ResponseEntity<String> response = controller.updateCustomField(123456L, "US", "Verified");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("success", response.getBody());
+    }
+
+    @Test
+    public void testUpdateCustomFieldFailure() {
+        MockitoAnnotations.openMocks(this);
+        when(service.updateCustomField(123456L, "US", "Verified")).thenReturn("failure");
+        ResponseEntity<String> response = controller.updateCustomField(123456L, "US", "Verified");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("failure", response.getBody());
+    }
+}
+```
+
+### Step 7: Configuration and Dependencies
+
+Ensure that your `application.properties` (or `application.yml`) is configured to connect to the CVD database. Also, include the necessary dependencies in your `pom.xml` or `build.gradle` file.
+
+### Step 8: Build and Run
+
+Once all the code is in place, build and run the application to test the API.
+
+Let me know if you encounter any issues during development!
