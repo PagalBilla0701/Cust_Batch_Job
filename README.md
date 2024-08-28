@@ -1,68 +1,94 @@
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+      To create a JUnit test class for the `StatusDto` class, you can follow these steps. The `StatusDto` class uses the `@Data` annotation from Lombok, which automatically generates getters, setters, `toString()`, `equals()`, and `hashCode()` methods. 
 
-import java.util.Optional;
+Here’s the `StatusDto` class:
+
+```java
+import lombok.Data;
+
+@Data
+public class StatusDto {
+    private String status;
+}
+```
+
+### JUnit Test Class for `StatusDto`
+
+Below is a simple JUnit test class that tests the basic functionality of the `StatusDto` class:
+
+```java
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-public class IVRCallActivityServiceImplTest {
+public class StatusDtoTest {
 
-    @Mock
-    private IVRCallActivityRepository ivrCallActivityRepository;
-
-    @InjectMocks
-    private IVRCallActivityServiceImpl ivrCallActivityService;
+    private StatusDto statusDto;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        statusDto = new StatusDto();
     }
 
     @Test
-    public void testUpdateIVRCallActivity_Success() {
+    public void testSetAndGetStatus() {
         // Arrange
-        Long refNo = 1L;
-        String countryCode = "US";
-        SecondFactorAuthentication secondFactorAuthentication = new SecondFactorAuthentication();
-        secondFactorAuthentication.setSecondFactorAuthentication("OTP");
-
-        IVRCallActivity ivrCallActivity = new IVRCallActivity();
-        ivrCallActivity.setRefNo(refNo);
-        ivrCallActivity.setCountryCode(countryCode);
-
-        when(ivrCallActivityRepository.findByRefNoAndCountryCode(refNo, countryCode))
-                .thenReturn(Optional.of(ivrCallActivity));
+        String expectedStatus = "ACTIVE";
 
         // Act
-        boolean result = ivrCallActivityService.updateIVRCallActivity(refNo, countryCode, secondFactorAuthentication);
+        statusDto.setStatus(expectedStatus);
 
         // Assert
-        assertTrue(result);
-        verify(ivrCallActivityRepository, times(1)).save(ivrCallActivity);
+        assertEquals(expectedStatus, statusDto.getStatus(), "The status should be set correctly.");
     }
 
     @Test
-    public void testUpdateIVRCallActivity_RecordNotFound() {
+    public void testEqualsAndHashCode() {
         // Arrange
-        Long refNo = 1L;
-        String countryCode = "US";
-        SecondFactorAuthentication secondFactorAuthentication = new SecondFactorAuthentication();
-        secondFactorAuthentication.setSecondFactorAuthentication("OTP");
-
-        when(ivrCallActivityRepository.findByRefNoAndCountryCode(refNo, countryCode))
-                .thenReturn(Optional.empty());
-
-        // Act
-        boolean result = ivrCallActivityService.updateIVRCallActivity(refNo, countryCode, secondFactorAuthentication);
+        StatusDto anotherStatusDto = new StatusDto();
+        statusDto.setStatus("ACTIVE");
+        anotherStatusDto.setStatus("ACTIVE");
 
         // Assert
-        assertFalse(result);
-        verify(ivrCallActivityRepository, never()).save(any(IVRCallActivity.class));
+        assertEquals(statusDto, anotherStatusDto, "StatusDto objects with the same status should be equal.");
+        assertEquals(statusDto.hashCode(), anotherStatusDto.hashCode(), "Hash codes should be equal for equal objects.");
+
+        // Act
+        anotherStatusDto.setStatus("INACTIVE");
+
+        // Assert
+        assertNotEquals(statusDto, anotherStatusDto, "StatusDto objects with different statuses should not be equal.");
+    }
+
+    @Test
+    public void testToString() {
+        // Arrange
+        String expectedStatus = "ACTIVE";
+        statusDto.setStatus(expectedStatus);
+
+        // Act
+        String result = statusDto.toString();
+
+        // Assert
+        assertEquals("StatusDto(status=ACTIVE)", result, "The toString method should return the correct string representation.");
     }
 }
+```
+
+### Explanation of the Test Class:
+
+1. **Test Initialization (`@BeforeEach`):**
+   - The `setUp()` method initializes a `StatusDto` instance before each test is run.
+
+2. **Test for `setStatus` and `getStatus`:**
+   - The `testSetAndGetStatus()` method checks whether the `status` field can be correctly set and retrieved.
+
+3. **Test for `equals` and `hashCode`:**
+   - The `testEqualsAndHashCode()` method verifies that two `StatusDto` objects with the same `status` value are considered equal and have the same hash code.
+   - It also checks that objects with different `status` values are not considered equal.
+
+4. **Test for `toString`:**
+   - The `testToString()` method ensures that the `toString()` method returns the expected string representation of the `StatusDto` object.
+
+These tests cover the basic functionalities provided by the Lombok-generated methods. Run the tests to ensure that the `StatusDto` class behaves as expected.
