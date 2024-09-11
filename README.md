@@ -1,124 +1,198 @@
-     public class MenuTraversalDTO {
+The error you're seeing indicates that Hibernate (or the ORM you're using) cannot determine how to map a Map<String, String> directly into a database column. Hibernate, by default, doesn't know how to persist complex types like Map<String, String> without explicit instructions.
 
-    private String cli;
-    private String ucid;
-    private FullMenuTraversalDTO fullMenuTraversal;
-    private String transferExclusion;
+To resolve this issue and allow the dynamic storage of the fullMenuTraversal field (which is a Map<String, String>), you can:
 
-    // Getters and Setters
-    public String getCli() {
-        return cli;
+Option 1: Serialize the Map as a JSON String
+
+This is one of the most common approaches. You can store the Map<String, String> as a JSON string in a database column, and deserialize it when retrieving data. For this, you can use @Convert with a custom AttributeConverter to handle the conversion between the Map<String, String> and String.
+
+Here’s how to implement it:
+
+1. Create a Converter for the Map<String, String>
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+@Converter(autoApply = true)
+public class MapToJsonConverter implements AttributeConverter<Map<String, String>, String> {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public String convertToDatabaseColumn(Map<String, String> attribute) {
+        try {
+            // Convert Map to JSON String
+            return objectMapper.writeValueAsString(attribute);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Error converting map to JSON", e);
+        }
     }
 
-    public void setCli(String cli) {
-        this.cli = cli;
+    @Override
+    public Map<String, String> convertToEntityAttribute(String dbData) {
+        try {
+            // Convert JSON String to Map
+            return objectMapper.readValue(dbData, HashMap.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error reading JSON from database", e);
+        }
     }
+}
 
-    public String getUcid() {
-        return ucid;
-    }
+2. Update Your IvrCallReport Entity to Use the Converter
 
-    public void setUcid(String ucid) {
-        this.ucid = ucid;
-    }
+import javax.persistence.Convert;
+import java.util.Map;
 
-    public FullMenuTraversalDTO getFullMenuTraversal() {
+@Entity
+public class IvrCallReport {
+
+    // Other fields...
+
+    @Convert(converter = MapToJsonConverter.class)
+    private Map<String, String> fullMenuTraversal;
+
+    // Getters and setters
+    public Map<String, String> getFullMenuTraversal() {
         return fullMenuTraversal;
     }
 
-    public void setFullMenuTraversal(FullMenuTraversalDTO fullMenuTraversal) {
+    public void setFullMenuTraversal(Map<String, String> fullMenuTraversal) {
         this.fullMenuTraversal = fullMenuTraversal;
     }
+}
 
-    public String getTransferExclusion() {
-        return transferExclusion;
+3. Adjust Your DTO and Service Logic
+
+In your IvrCallReportDto, ensure you have a Map<String, String> for fullMenuTraversal:
+
+public class IvrCallReportDto {
+    private Map<String, String> fullMenuTraversal;
+
+    // Getters and setters
+    public Map<String, String> getFullMenuTraversal() {
+        return fullMenuTraversal;
     }
 
-    public void setTransferExclusion(String transferExclusion) {
-        this.transferExclusion = transferExclusion;
-    }
-
-    // Nested DTO class for FullMenuTraversal
-    public static class FullMenuTraversalDTO {
-
-        private String menu1;
-        private String menu2;
-        private String menu3;
-        private String menu4;
-        private String menu5;
-        private String menu6;
-        private String menu7;
-        private String menu8;
-        private String menu9;
-        private String menu10;
-        private String menu11;
-        private String menu12;
-        private String menu13;
-        private String menu14;
-        private String menu15;
-        private String menu16;
-        private String menu17;
-        private String menu18;
-        private String menu19;
-        private String menu20;
-        private String menu21;
-        private String menu22;
-        private String menu23;
-        private String menu24;
-        private String menu25;
-        private String menu26;
-        private String menu27;
-        private String menu28;
-        private String menu29;
-        private String menu30;
-        private String menu31;
-        private String menu32;
-        private String menu33;
-        private String menu34;
-        private String menu35;
-        private String menu36;
-        private String menu37;
-        private String menu38;
-        private String menu39;
-        private String menu40;
-        private String menu41;
-        private String menu42;
-        private String menu43;
-        private String menu44;
-        private String menu45;
-        private String menu46;
-        private String menu47;
-        private String menu48;
-        private String menu49;
-        private String menu50;
-        private String menu51;
-        private String menu52;
-        private String menu53;
-        private String menu54;
-        private String menu55;
-        private String menu56;
-        private String menu57;
-        private String menu58;
-
-        // Getters and Setters for each menu
-        // Example:
-        public String getMenu1() {
-            return menu1;
-        }
-
-        public void setMenu1(String menu1) {
-            this.menu1 = menu1;
-        }
-
-        public String getMenu2() {
-            return menu2;
-        }
-
-        public void setMenu2(String menu2) {
-            this.menu2 = menu2;
-        }
-
-        // Add similar getters and setters for each menu field
-        // ...
+    public void setFullMenuTraversal(Map<String, String> fullMenuTraversal) {
+        this.fullMenuTraversal = fullMenuTraversal;
     }
 }
+
+In your CallReportService implementation, you should already have logic to populate this map and save the entity:
+
+@Override
+public Boolean insertIvrCallReport(IvrCallReportDto dto) {
+    Boolean inserted = false;
+
+    // Create an instance of IvrCallReport
+    IvrCallReport report = new IvrCallReport();
+
+    // Set creation and update details
+    Date currentDate = Calendar.getInstance().getTime();
+    report.setXCreat("IVR");
+    report.setDCreat(currentDate);
+    report.setDUpd(currentDate);
+    report.setXUpd("IVR");
+
+    // Set the fullMenuTraversal map
+    report.setFullMenuTraversal(dto.getFullMenuTraversal());
+
+    // Save the report and check if it was saved successfully
+    IvrCallReport savedReport = ivrRepo.save(report);
+    if (Objects.nonNull(savedReport)) {
+        inserted = true;
+    }
+
+    return inserted;
+}
+
+Option 2: Create a Separate Table for fullMenuTraversal
+
+If you want to model this as a separate table and store each key-value pair from the Map<String, String> into the database, you will need to create a @OneToMany relationship between the IvrCallReport entity and another entity representing the menu traversal.
+
+Here’s a quick overview of this approach:
+
+1. Create a FullMenuTraversal Entity:
+
+
+
+@Entity
+public class FullMenuTraversal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String menuKey;
+
+    private String menuValue;
+
+    @ManyToOne
+    @JoinColumn(name = "ivr_call_report_id")
+    private IvrCallReport ivrCallReport;
+
+    // Getters and setters
+}
+
+2. Update IvrCallReport Entity:
+
+
+
+@Entity
+public class IvrCallReport {
+
+    // Other fields...
+
+    @OneToMany(mappedBy = "ivrCallReport", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FullMenuTraversal> fullMenuTraversals = new ArrayList<>();
+
+    // Getters and setters
+}
+
+3. Adjust Logic to Populate the Relationship:
+
+
+
+In your service, iterate through the Map<String, String> and populate the FullMenuTraversal entity list:
+
+@Override
+public Boolean insertIvrCallReport(IvrCallReportDto dto) {
+    Boolean inserted = false;
+
+    IvrCallReport report = new IvrCallReport();
+    Date currentDate = Calendar.getInstance().getTime();
+    report.setXCreat("IVR");
+    report.setDCreat(currentDate);
+    report.setDUpd(currentDate);
+    report.setXUpd("IVR");
+
+    // Populate FullMenuTraversal entities
+    List<FullMenuTraversal> traversalList = new ArrayList<>();
+    for (Map.Entry<String, String> entry : dto.getFullMenuTraversal().entrySet()) {
+        FullMenuTraversal traversal = new FullMenuTraversal();
+        traversal.setMenuKey(entry.getKey());
+        traversal.setMenuValue(entry.getValue());
+        traversal.setIvrCallReport(report);
+        traversalList.add(traversal);
+    }
+    report.setFullMenuTraversals(traversalList);
+
+    IvrCallReport savedReport = ivrRepo.save(report);
+    if (Objects.nonNull(savedReport)) {
+        inserted = true;
+    }
+
+    return inserted;
+}
+
+Conclusion:
+
+Both options are valid, and the choice depends on your requirements. If fullMenuTraversal is relatively simple and you don't need to query it individually, the JSON serialization approach (Option 1) is easier. If you need to query or manipulate the fullMenuTraversal data independently, Option 2 (with a separate table) would be better.
+
