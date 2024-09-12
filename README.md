@@ -1,82 +1,52 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+      The unit test code provided is incomplete and has some issues, such as improper handling of mocks, syntax errors, and missing assertions. Below is a corrected version of both the positive and negative test cases for the insertIvrCallReport method.
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.HashMap;
-import java.util.Map;
+Corrected Positive Test
 
-public class MapToJsonConverterTest {
+@Test
+public void testIvrCallReportInsert() {
+    // Arrange
+    IvrCallReportDto dto = new IvrCallReportDto();
+    IvrCallReport report = new IvrCallReport();
+    FullMenuTraversal menuTraversal = new FullMenuTraversal();
 
-    private MapToJsonConverter converter;
+    // Mock the mapper and repository methods
+    when(ivrCallReportMapper.mapToIvrCallReportTable(dto)).thenReturn(report);
+    when(ivrRepo.save(report)).thenReturn(report);
+    when(fullMenuTraversalRepo.save(any(FullMenuTraversal.class))).thenReturn(menuTraversal);
 
-    @BeforeEach
-    public void setUp() {
-        converter = new MapToJsonConverter();
-    }
+    // Act
+    Boolean result = service.insertIvrCallReport(dto);
 
-    @Test
-    public void testConvertToDatabaseColumn() {
-        // Given
-        Map<String, String> map = new HashMap<>();
-        map.put("Menu1", "START");
-        map.put("Menu2", "BIRTH_GRT");
-
-        // When
-        String json = converter.convertToDatabaseColumn(map);
-
-        // Then
-        assertNotNull(json);
-        assertTrue(json.contains("\"Menu1\":\"START\""));
-        assertTrue(json.contains("\"Menu2\":\"BIRTH_GRT\""));
-    }
-
-    @Test
-    public void testConvertToDatabaseColumnNull() {
-        // Given
-        Map<String, String> map = null;
-
-        // When
-        String json = converter.convertToDatabaseColumn(map);
-
-        // Then
-        assertNull(json);  // null should remain null
-    }
-
-    @Test
-    public void testConvertToEntityAttribute() {
-        // Given
-        String json = "{\"Menu1\":\"START\",\"Menu2\":\"BIRTH_GRT\"}";
-
-        // When
-        Map<String, String> map = converter.convertToEntityAttribute(json);
-
-        // Then
-        assertNotNull(map);
-        assertEquals("START", map.get("Menu1"));
-        assertEquals("BIRTH_GRT", map.get("Menu2"));
-    }
-
-    @Test
-    public void testConvertToEntityAttributeNull() {
-        // Given
-        String json = null;
-
-        // When
-        Map<String, String> map = converter.convertToEntityAttribute(json);
-
-        // Then
-        assertNull(map);  // null should remain null
-    }
-
-    @Test
-    public void testConvertToEntityAttributeInvalidJson() {
-        // Given
-        String invalidJson = "{invalid json}";
-
-        // Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            // When
-            converter.convertToEntityAttribute(invalidJson);
-        });
-    }
+    // Assert
+    assertThat(result).isTrue();  // Ensure the result is true
 }
+
+Corrected Negative Test
+
+@Test
+public void testIvrCallReportInsert_negative() {
+    // Arrange
+    IvrCallReportDto dto = new IvrCallReportDto();
+    IvrCallReport report = new IvrCallReport();
+
+    // Mock the mapper and repository methods to simulate failure
+    when(ivrCallReportMapper.mapToIvrCallReportTable(dto)).thenReturn(report);
+    when(ivrRepo.save(report)).thenReturn(null);  // Simulate failure
+    when(fullMenuTraversalRepo.save(any(FullMenuTraversal.class))).thenReturn(null);  // Simulate failure
+
+    // Act
+    Boolean result = service.insertIvrCallReport(dto);
+
+    // Assert
+    assertThat(result).isFalse();  // Ensure the result is false
+}
+
+Key Changes:
+
+1. Mocks: In both tests, the mapper (ivrCallReportMapper.mapToIvrCallReportTable(dto)) and repository (ivrRepo.save(report), fullMenuTraversalRepo.save(menuTraversal)) methods are mocked to return either the expected object or null in the case of failure.
+
+
+2. Use of any() matcher: For the `full
+
+
+
