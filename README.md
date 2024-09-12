@@ -1,70 +1,88 @@
-if (menus.containsKey("Menu1")) menuTraversal.setMenu1(menus.get("Menu1"));
-if (menus.containsKey("Menu2")) menuTraversal.setMenu2(menus.get("Menu2"));
-if (menus.containsKey("Menu3")) menuTraversal.setMenu3(menus.get("Menu3"));
-if (menus.containsKey("Menu4")) menuTraversal.setMenu4(menus.get("Menu4"));
-if (menus.containsKey("Menu5")) menuTraversal.setMenu5(menus.get("Menu5"));
-if (menus.containsKey("Menu6")) menuTraversal.setMenu6(menus.get("Menu6"));
-if (menus.containsKey("Menu7")) menuTraversal.setMenu7(menus.get("Menu7"));
-if (menus.containsKey("Menu8")) menuTraversal.setMenu8(menus.get("Menu8"));
-if (menus.containsKey("Menu9")) menuTraversal.setMenu9(menus.get("Menu9"));
-if (menus.containsKey("Menu10")) menuTraversal.setMenu10(menus.get("Menu10"));
-if (menus.containsKey("Menu11")) menuTraversal.setMenu11(menus.get("Menu11"));
-if (menus.containsKey("Menu12")) menuTraversal.setMenu12(menus.get("Menu12"));
-if (menus.containsKey("Menu13")) menuTraversal.setMenu13(menus.get("Menu13"));
-if (menus.containsKey("Menu14")) menuTraversal.setMenu14(menus.get("Menu14"));
-if (menus.containsKey("Menu15")) menuTraversal.setMenu15(menus.get("Menu15"));
-if (menus.containsKey("Menu16")) menuTraversal.setMenu16(menus.get("Menu16"));
-if (menus.containsKey("Menu17")) menuTraversal.setMenu17(menus.get("Menu17"));
-if (menus.containsKey("Menu18")) menuTraversal.setMenu18(menus.get("Menu18"));
-if (menus.containsKey("Menu19")) menuTraversal.setMenu19(menus.get("Menu19"));
-if (menus.containsKey("Menu20")) menuTraversal.setMenu20(menus.get("Menu20"));
-if (menus.containsKey("Menu21")) menuTraversal.setMenu21(menus.get("Menu21"));
-if (menus.containsKey("Menu22")) menuTraversal.setMenu22(menus.get("Menu22"));
-if (menus.containsKey("Menu23")) menuTraversal.setMenu23(menus.get("Menu23"));
-if (menus.containsKey("Menu24")) menuTraversal.setMenu24(menus.get("Menu24"));
-if (menus.containsKey("Menu25")) menuTraversal.setMenu25(menus.get("Menu25"));
-if (menus.containsKey("Menu26")) menuTraversal.setMenu26(menus.get("Menu26"));
-if (menus.containsKey("Menu27")) menuTraversal.setMenu27(menus.get("Menu27"));
-if (menus.containsKey("Menu28")) menuTraversal.setMenu28(menus.get("Menu28"));
-if (menus.containsKey("Menu29")) menuTraversal.setMenu29(menus.get("Menu29"));
-if (menus.containsKey("Menu30")) menuTraversal.setMenu30(menus.get("Menu30"));
-if (menus.containsKey("Menu31")) menuTraversal.setMenu31(menus.get("Menu31"));
-if (menus.containsKey("Menu32")) menuTraversal.setMenu32(menus.get("Menu32"));
-if (menus.containsKey("Menu33")) menuTraversal.setMenu33(menus.get("Menu33"));
-if (menus.containsKey("Menu34")) menuTraversal.setMenu34(menus.get("Menu34"));
-if (menus.containsKey("Menu35")) menuTraversal.setMenu35(menus.get("Menu35"));
-if (menus.containsKey("Menu36")) menuTraversal.setMenu36(menus.get("Menu36"));
-if (menus.containsKey("Menu37")) menuTraversal.setMenu37(menus.get("Menu37"));
-if (menus.containsKey("Menu38")) menuTraversal.setMenu38(menus.get("Menu38"));
-if (menus.containsKey("Menu39")) menuTraversal.setMenu39(menus.get("Menu39"));
-if (menus.containsKey("Menu40")) menuTraversal.setMenu40(menus.get("Menu40"));
-if (menus.containsKey("Menu41")) menuTraversal.setMenu41(menus.get("Menu41"));
-if (menus.containsKey("Menu42")) menuTraversal.setMenu42(menus.get("Menu42"));
-if (menus.containsKey("Menu43")) menuTraversal.setMenu43(menus.get("Menu43"));
-if (menus.containsKey("Menu44")) menuTraversal.setMenu44(menus.get("Menu44"));
-if (menus.containsKey("Menu45")) menuTraversal.setMenu45(menus.get("Menu45"));
-if (menus.containsKey("Menu46")) menuTraversal.setMenu46(menus.get("Menu46"));
-if (menus.containsKey("Menu47")) menuTraversal.setMenu47(menus.get("Menu47"));
-if (menus.containsKey("Menu48")) menuTraversal.setMenu48(menus.get("Menu48"));
-if (menus.containsKey("Menu49")) menuTraversal.setMenu49(menus.get("Menu49"));
-if (menus.containsKey("Menu50")) menuTraversal.setMenu50(menus.get("Menu50"));
-if (menus.containsKey("Menu51")) menuTraversal.setMenu51(menus.get("Menu51"));
-if (menus.containsKey("Menu52")) menuTraversal.setMenu52(menus.get("Menu52"));
-if (menus.containsKey("Menu53")) menuTraversal.setMenu53(menus.get("Menu53"));
-if (menus.containsKey("Menu54")) menuTraversal.setMenu54(menus.get("Menu54"));
-if (menus.containsKey("Menu55")) menuTraversal.setMenu55(menus.get("Menu55"));
-if (menus.containsKey("Menu56")) menuTraversal.setMenu56(menus.get("Menu56"));
-if (menus.containsKey("Menu57")) menuTraversal.setMenu57(menus.get("Menu57"));
-if (menus.containsKey("Menu58")) menuTraversal.setMenu58(menus.get("Menu58"));
-if (menus.containsKey("Menu59")) menuTraversal.setMenu59(menus.get("Menu59"));
-if (menus.containsKey("Menu60")) menuTraversal.setMenu60(menus.get("Menu60"));
-if (menus.containsKey("Menu61")) menuTraversal.setMenu61(menus.get("Menu61"));
-if (menus.containsKey("Menu62")) menuTraversal.setMenu62(menus.get("Menu62"));
-if (menus.containsKey("Menu63")) menuTraversal.setMenu63(menus.get("Menu63"));
-if (menus.containsKey("Menu64")) menuTraversal.setMenu64(menus.get("Menu64"));
-if (menus.containsKey("Menu65")) menuTraversal.setMenu65(menus.get("Menu65"));
-if (menus.containsKey("Menu66")) menuTraversal.setMenu66(menus.get("Menu66"));
-if (menus.containsKey("Menu67")) menuTraversal.setMenu67(menus.get("Menu67"));
-if (menus.containsKey("Menu68")) menuTraversal.setMenu68(menus.get("Menu68"));
-if (menus.containsKey("Menu69")) menuTraversal.setMenu69(menus.get("Menu69"));
-if (menus.containsKey("Menu70")) menuTraversal.setMenu70(menus.get("Menu70"));
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith(SpringExtension.class) // JUnit 5 Extension for Spring Support
+@DataJpaTest // This enables in-memory DB testing with JPA
+public class IvrCallReportTest {
+
+    @Autowired
+    private IvrCallReportRepository ivrCallReportRepository; // Assuming you have a repository
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private IvrCallReport ivrCallReport;
+
+    @BeforeEach
+    void setUp() {
+        // Create a sample IvrCallReport instance with a map
+        Map<String, String> fullMenuTraversal = new HashMap<>();
+        fullMenuTraversal.put("Menu1", "START");
+        fullMenuTraversal.put("Menu2", "BIRTH_GRT");
+
+        ivrCallReport = new IvrCallReport();
+        ivrCallReport.setCli(63949242781L);
+        ivrCallReport.setUcid(107654678L);
+        ivrCallReport.setFullMenuTraversal(fullMenuTraversal);
+        ivrCallReport.setXCreat("TestCreator");
+        ivrCallReport.setDCreat(new Date());
+        ivrCallReport.setXUpd("TestUpdater");
+        ivrCallReport.setDUpd(new Date());
+    }
+
+    @Test
+    @Transactional
+    public void testSaveAndRetrieveIvrCallReport() throws JsonProcessingException {
+        // Save the IvrCallReport entity
+        IvrCallReport savedReport = ivrCallReportRepository.save(ivrCallReport);
+
+        // Clear persistence context to force reload from DB
+        entityManager.clear();
+
+        // Retrieve the entity from the database
+        IvrCallReport retrievedReport = ivrCallReportRepository.findById(savedReport.getId()).orElse(null);
+
+        // Assert that the retrieved entity is not null
+        assertThat(retrievedReport).isNotNull();
+
+        // Assert the properties of the retrieved entity
+        assertThat(retrievedReport.getCli()).isEqualTo(ivrCallReport.getCli());
+        assertThat(retrievedReport.getUcid()).isEqualTo(ivrCallReport.getUcid());
+        assertThat(retrievedReport.getXCreat()).isEqualTo(ivrCallReport.getXCreat());
+
+        // Test the Map<String, String> conversion and retrieval
+        assertThat(retrievedReport.getFullMenuTraversal()).isNotNull();
+        assertThat(retrievedReport.getFullMenuTraversal().get("Menu1")).isEqualTo("START");
+        assertThat(retrievedReport.getFullMenuTraversal().get("Menu2")).isEqualTo("BIRTH_GRT");
+    }
+
+    @Test
+    @Transactional
+    public void testEmptyFullMenuTraversal() {
+        // Set an empty map for fullMenuTraversal
+        ivrCallReport.setFullMenuTraversal(new HashMap<>());
+
+        // Save and retrieve the entity
+        IvrCallReport savedReport = ivrCallReportRepository.save(ivrCallReport);
+        entityManager.clear(); // Clear the persistence context
+        IvrCallReport retrievedReport = ivrCallReportRepository.findById(savedReport.getId()).orElse(null);
+
+        // Assert that the map is empty
+        assertThat(retrievedReport).isNotNull();
+        assertThat(retrievedReport.getFullMenuTraversal()).isEmpty();
+    }
+}
