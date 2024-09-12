@@ -1,3 +1,36 @@
+@Column(name = "MENU_60")
+    private String menu60;
+
+    @Column(name = "MENU_61")
+    private String menu61;
+
+    @Column(name = "MENU_62")
+    private String menu62;
+
+    @Column(name = "MENU_63")
+    private String menu63;
+
+    @Column(name = "MENU_64")
+    private String menu64;
+
+    @Column(name = "MENU_65")
+    private String menu65;
+
+    @Column(name = "MENU_66")
+    private String menu66;
+
+    @Column(name = "MENU_67")
+    private String menu67;
+
+    @Column(name = "MENU_68")
+    private String menu68;
+
+    @Column(name = "MENU_69")
+    private String menu69;
+
+    @Column(name = "MENU_70")
+    private String menu70;
+
 import javax.persistence.*;
 import java.util.Date;
 
