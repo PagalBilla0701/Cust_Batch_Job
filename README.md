@@ -1,88 +1,82 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import java.util.Date;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class MapToJsonConverterTest {
 
-@ExtendWith(SpringExtension.class) // JUnit 5 Extension for Spring Support
-@DataJpaTest // This enables in-memory DB testing with JPA
-public class IvrCallReportTest {
-
-    @Autowired
-    private IvrCallReportRepository ivrCallReportRepository; // Assuming you have a repository
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private IvrCallReport ivrCallReport;
+    private MapToJsonConverter converter;
 
     @BeforeEach
-    void setUp() {
-        // Create a sample IvrCallReport instance with a map
-        Map<String, String> fullMenuTraversal = new HashMap<>();
-        fullMenuTraversal.put("Menu1", "START");
-        fullMenuTraversal.put("Menu2", "BIRTH_GRT");
-
-        ivrCallReport = new IvrCallReport();
-        ivrCallReport.setCli(63949242781L);
-        ivrCallReport.setUcid(107654678L);
-        ivrCallReport.setFullMenuTraversal(fullMenuTraversal);
-        ivrCallReport.setXCreat("TestCreator");
-        ivrCallReport.setDCreat(new Date());
-        ivrCallReport.setXUpd("TestUpdater");
-        ivrCallReport.setDUpd(new Date());
+    public void setUp() {
+        converter = new MapToJsonConverter();
     }
 
     @Test
-    @Transactional
-    public void testSaveAndRetrieveIvrCallReport() throws JsonProcessingException {
-        // Save the IvrCallReport entity
-        IvrCallReport savedReport = ivrCallReportRepository.save(ivrCallReport);
+    public void testConvertToDatabaseColumn() {
+        // Given
+        Map<String, String> map = new HashMap<>();
+        map.put("Menu1", "START");
+        map.put("Menu2", "BIRTH_GRT");
 
-        // Clear persistence context to force reload from DB
-        entityManager.clear();
+        // When
+        String json = converter.convertToDatabaseColumn(map);
 
-        // Retrieve the entity from the database
-        IvrCallReport retrievedReport = ivrCallReportRepository.findById(savedReport.getId()).orElse(null);
-
-        // Assert that the retrieved entity is not null
-        assertThat(retrievedReport).isNotNull();
-
-        // Assert the properties of the retrieved entity
-        assertThat(retrievedReport.getCli()).isEqualTo(ivrCallReport.getCli());
-        assertThat(retrievedReport.getUcid()).isEqualTo(ivrCallReport.getUcid());
-        assertThat(retrievedReport.getXCreat()).isEqualTo(ivrCallReport.getXCreat());
-
-        // Test the Map<String, String> conversion and retrieval
-        assertThat(retrievedReport.getFullMenuTraversal()).isNotNull();
-        assertThat(retrievedReport.getFullMenuTraversal().get("Menu1")).isEqualTo("START");
-        assertThat(retrievedReport.getFullMenuTraversal().get("Menu2")).isEqualTo("BIRTH_GRT");
+        // Then
+        assertNotNull(json);
+        assertTrue(json.contains("\"Menu1\":\"START\""));
+        assertTrue(json.contains("\"Menu2\":\"BIRTH_GRT\""));
     }
 
     @Test
-    @Transactional
-    public void testEmptyFullMenuTraversal() {
-        // Set an empty map for fullMenuTraversal
-        ivrCallReport.setFullMenuTraversal(new HashMap<>());
+    public void testConvertToDatabaseColumnNull() {
+        // Given
+        Map<String, String> map = null;
 
-        // Save and retrieve the entity
-        IvrCallReport savedReport = ivrCallReportRepository.save(ivrCallReport);
-        entityManager.clear(); // Clear the persistence context
-        IvrCallReport retrievedReport = ivrCallReportRepository.findById(savedReport.getId()).orElse(null);
+        // When
+        String json = converter.convertToDatabaseColumn(map);
 
-        // Assert that the map is empty
-        assertThat(retrievedReport).isNotNull();
-        assertThat(retrievedReport.getFullMenuTraversal()).isEmpty();
+        // Then
+        assertNull(json);  // null should remain null
+    }
+
+    @Test
+    public void testConvertToEntityAttribute() {
+        // Given
+        String json = "{\"Menu1\":\"START\",\"Menu2\":\"BIRTH_GRT\"}";
+
+        // When
+        Map<String, String> map = converter.convertToEntityAttribute(json);
+
+        // Then
+        assertNotNull(map);
+        assertEquals("START", map.get("Menu1"));
+        assertEquals("BIRTH_GRT", map.get("Menu2"));
+    }
+
+    @Test
+    public void testConvertToEntityAttributeNull() {
+        // Given
+        String json = null;
+
+        // When
+        Map<String, String> map = converter.convertToEntityAttribute(json);
+
+        // Then
+        assertNull(map);  // null should remain null
+    }
+
+    @Test
+    public void testConvertToEntityAttributeInvalidJson() {
+        // Given
+        String invalidJson = "{invalid json}";
+
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            // When
+            converter.convertToEntityAttribute(invalidJson);
+        });
     }
 }
