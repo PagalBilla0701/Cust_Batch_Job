@@ -1,45 +1,70 @@
-public Boolean insertIvrCallReport(IvrCallReportDto dto) {
-    Boolean inserted = false;
-    Date currentDate = Calendar.getInstance().getTime();
-
-    // Map DTO to IvrCallReport entity
-    IvrCallReport report = new IvrCallReport();
-    report.setXCreat("IVR");
-    report.setDCreat(currentDate);
-    report = ivrCallReportMapper.mapToIvrCallReportTable(dto);
-    report.setDUpd(currentDate);
-    report.setXUpd("IVR");
-
-    // Saving the IvrCallReport entity
-    IvrCallReport savedReport = ivrRepo.save(report);
-
-    // Check if fullMenuTraversal exists in the DTO and map it to FullMenuTraversal entity
-    if (dto.getFullMenuTraversal() != null && !dto.getFullMenuTraversal().isEmpty()) {
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-        menuTraversal.setUcid(savedReport.getId()); // Assuming UCID is related to IvrCallReport ID
-        menuTraversal.setXCreat("IVR");
-        menuTraversal.setDCreat(currentDate);
-        menuTraversal.setDUpd(currentDate);
-        menuTraversal.setXUpd("IVR");
-
-        // Dynamically mapping the menu fields from the DTO's Map
-        Map<String, String> menus = dto.getFullMenuTraversal();
-
-        if (menus.containsKey("menu1")) menuTraversal.setMenu1(menus.get("menu1"));
-        if (menus.containsKey("menu2")) menuTraversal.setMenu2(menus.get("menu2"));
-        if (menus.containsKey("menu3")) menuTraversal.setMenu3(menus.get("menu3"));
-        if (menus.containsKey("menu4")) menuTraversal.setMenu4(menus.get("menu4"));
-        if (menus.containsKey("menu5")) menuTraversal.setMenu5(menus.get("menu5"));
-        // Continue for other menu fields based on the keys in the Map
-
-        // Save the FullMenuTraversal entity to the database
-        fullMenuTraversalRepo.save(menuTraversal); 
-    }
-
-    // Return true if both IvrCallReport and FullMenuTraversal were saved successfully
-    if (savedReport != null) {
-        inserted = true;
-    }
-
-    return inserted;
-}
+if (menus.containsKey("Menu1")) menuTraversal.setMenu1(menus.get("Menu1"));
+if (menus.containsKey("Menu2")) menuTraversal.setMenu2(menus.get("Menu2"));
+if (menus.containsKey("Menu3")) menuTraversal.setMenu3(menus.get("Menu3"));
+if (menus.containsKey("Menu4")) menuTraversal.setMenu4(menus.get("Menu4"));
+if (menus.containsKey("Menu5")) menuTraversal.setMenu5(menus.get("Menu5"));
+if (menus.containsKey("Menu6")) menuTraversal.setMenu6(menus.get("Menu6"));
+if (menus.containsKey("Menu7")) menuTraversal.setMenu7(menus.get("Menu7"));
+if (menus.containsKey("Menu8")) menuTraversal.setMenu8(menus.get("Menu8"));
+if (menus.containsKey("Menu9")) menuTraversal.setMenu9(menus.get("Menu9"));
+if (menus.containsKey("Menu10")) menuTraversal.setMenu10(menus.get("Menu10"));
+if (menus.containsKey("Menu11")) menuTraversal.setMenu11(menus.get("Menu11"));
+if (menus.containsKey("Menu12")) menuTraversal.setMenu12(menus.get("Menu12"));
+if (menus.containsKey("Menu13")) menuTraversal.setMenu13(menus.get("Menu13"));
+if (menus.containsKey("Menu14")) menuTraversal.setMenu14(menus.get("Menu14"));
+if (menus.containsKey("Menu15")) menuTraversal.setMenu15(menus.get("Menu15"));
+if (menus.containsKey("Menu16")) menuTraversal.setMenu16(menus.get("Menu16"));
+if (menus.containsKey("Menu17")) menuTraversal.setMenu17(menus.get("Menu17"));
+if (menus.containsKey("Menu18")) menuTraversal.setMenu18(menus.get("Menu18"));
+if (menus.containsKey("Menu19")) menuTraversal.setMenu19(menus.get("Menu19"));
+if (menus.containsKey("Menu20")) menuTraversal.setMenu20(menus.get("Menu20"));
+if (menus.containsKey("Menu21")) menuTraversal.setMenu21(menus.get("Menu21"));
+if (menus.containsKey("Menu22")) menuTraversal.setMenu22(menus.get("Menu22"));
+if (menus.containsKey("Menu23")) menuTraversal.setMenu23(menus.get("Menu23"));
+if (menus.containsKey("Menu24")) menuTraversal.setMenu24(menus.get("Menu24"));
+if (menus.containsKey("Menu25")) menuTraversal.setMenu25(menus.get("Menu25"));
+if (menus.containsKey("Menu26")) menuTraversal.setMenu26(menus.get("Menu26"));
+if (menus.containsKey("Menu27")) menuTraversal.setMenu27(menus.get("Menu27"));
+if (menus.containsKey("Menu28")) menuTraversal.setMenu28(menus.get("Menu28"));
+if (menus.containsKey("Menu29")) menuTraversal.setMenu29(menus.get("Menu29"));
+if (menus.containsKey("Menu30")) menuTraversal.setMenu30(menus.get("Menu30"));
+if (menus.containsKey("Menu31")) menuTraversal.setMenu31(menus.get("Menu31"));
+if (menus.containsKey("Menu32")) menuTraversal.setMenu32(menus.get("Menu32"));
+if (menus.containsKey("Menu33")) menuTraversal.setMenu33(menus.get("Menu33"));
+if (menus.containsKey("Menu34")) menuTraversal.setMenu34(menus.get("Menu34"));
+if (menus.containsKey("Menu35")) menuTraversal.setMenu35(menus.get("Menu35"));
+if (menus.containsKey("Menu36")) menuTraversal.setMenu36(menus.get("Menu36"));
+if (menus.containsKey("Menu37")) menuTraversal.setMenu37(menus.get("Menu37"));
+if (menus.containsKey("Menu38")) menuTraversal.setMenu38(menus.get("Menu38"));
+if (menus.containsKey("Menu39")) menuTraversal.setMenu39(menus.get("Menu39"));
+if (menus.containsKey("Menu40")) menuTraversal.setMenu40(menus.get("Menu40"));
+if (menus.containsKey("Menu41")) menuTraversal.setMenu41(menus.get("Menu41"));
+if (menus.containsKey("Menu42")) menuTraversal.setMenu42(menus.get("Menu42"));
+if (menus.containsKey("Menu43")) menuTraversal.setMenu43(menus.get("Menu43"));
+if (menus.containsKey("Menu44")) menuTraversal.setMenu44(menus.get("Menu44"));
+if (menus.containsKey("Menu45")) menuTraversal.setMenu45(menus.get("Menu45"));
+if (menus.containsKey("Menu46")) menuTraversal.setMenu46(menus.get("Menu46"));
+if (menus.containsKey("Menu47")) menuTraversal.setMenu47(menus.get("Menu47"));
+if (menus.containsKey("Menu48")) menuTraversal.setMenu48(menus.get("Menu48"));
+if (menus.containsKey("Menu49")) menuTraversal.setMenu49(menus.get("Menu49"));
+if (menus.containsKey("Menu50")) menuTraversal.setMenu50(menus.get("Menu50"));
+if (menus.containsKey("Menu51")) menuTraversal.setMenu51(menus.get("Menu51"));
+if (menus.containsKey("Menu52")) menuTraversal.setMenu52(menus.get("Menu52"));
+if (menus.containsKey("Menu53")) menuTraversal.setMenu53(menus.get("Menu53"));
+if (menus.containsKey("Menu54")) menuTraversal.setMenu54(menus.get("Menu54"));
+if (menus.containsKey("Menu55")) menuTraversal.setMenu55(menus.get("Menu55"));
+if (menus.containsKey("Menu56")) menuTraversal.setMenu56(menus.get("Menu56"));
+if (menus.containsKey("Menu57")) menuTraversal.setMenu57(menus.get("Menu57"));
+if (menus.containsKey("Menu58")) menuTraversal.setMenu58(menus.get("Menu58"));
+if (menus.containsKey("Menu59")) menuTraversal.setMenu59(menus.get("Menu59"));
+if (menus.containsKey("Menu60")) menuTraversal.setMenu60(menus.get("Menu60"));
+if (menus.containsKey("Menu61")) menuTraversal.setMenu61(menus.get("Menu61"));
+if (menus.containsKey("Menu62")) menuTraversal.setMenu62(menus.get("Menu62"));
+if (menus.containsKey("Menu63")) menuTraversal.setMenu63(menus.get("Menu63"));
+if (menus.containsKey("Menu64")) menuTraversal.setMenu64(menus.get("Menu64"));
+if (menus.containsKey("Menu65")) menuTraversal.setMenu65(menus.get("Menu65"));
+if (menus.containsKey("Menu66")) menuTraversal.setMenu66(menus.get("Menu66"));
+if (menus.containsKey("Menu67")) menuTraversal.setMenu67(menus.get("Menu67"));
+if (menus.containsKey("Menu68")) menuTraversal.setMenu68(menus.get("Menu68"));
+if (menus.containsKey("Menu69")) menuTraversal.setMenu69(menus.get("Menu69"));
+if (menus.containsKey("Menu70")) menuTraversal.setMenu70(menus.get("Menu70"));
