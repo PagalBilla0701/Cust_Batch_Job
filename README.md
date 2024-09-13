@@ -1,172 +1,132 @@
 @ExtendWith(MockitoExtension.class)
-public class CallReportServiceImplTest {
+class FeeWaiverServiceImplMYTest {
 
     @Mock
-    IvrCallReportRepository ivrRepo;
-
-    @Mock
-    AcdCallReportRepository acdRepo;
-
-    @Mock
-    FullMenuTraversalRepository fullMenuTraversalRepo;
-
-    @Mock
-    FullMenuTraversal menuTraversal;
+    private FeeWaiverRepositoryMY mockFeeWaiverRepository;
 
     @InjectMocks
-    CallReportServiceImpl service;
+    private FeeWaiverServiceImplMY feeWaiverServiceImplMYUnderTest;
 
-    @Mock
-    private IvrCallReportMapper ivrCallReportMapper;
+    private FeeWaiverDto dto;
 
-    @Mock
-    private AcdCallReportMapper acdCallReportMapper;
-
-    @Test
-    public void testIvrCallReportInsert() {
-        IvrCallReportDto dto = new IvrCallReportDto();
-        IvrCallReport report = new IvrCallReport();
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-
-        when(ivrCallReportMapper.mapToIvrCallReportTable(dto)).thenReturn(report);
-        when(ivrRepo.save(report)).thenReturn(report);
-        when(fullMenuTraversalRepo.save(any(FullMenuTraversal.class))).thenReturn(menuTraversal);
-
-        Boolean result = service.insertIvrCallReport(dto);
-        assertThat(result).isTrue();
+    @BeforeEach
+    void setUp() {
+        dto = new FeeWaiverDto();
+        dto.setCardNum("cardNum");
+        dto.setAnnualFeeRequested("annualFeeRequested");
+        dto.setAnnualFeeRequestedDate(LocalDate.now());
+        dto.setLateFeeRequested("lateFeeRequested");
+        dto.setLateFeeRequestedDate(LocalDate.now());
+        dto.setAnnualFeeEligible("annualFeeEligible");
+        dto.setLateFeeEligible("lateFeeEligible");
     }
 
     @Test
-    public void testIvrCallReportInsert_negative() {
-        IvrCallReportDto dto = new IvrCallReportDto();
-        IvrCallReport report = new IvrCallReport();
+    void testGetCountryCode() {
+        assertThat(feeWaiverServiceImplMYUnderTest.getCountryCode()).isEqualTo("MY");
+    }
 
-        when(ivrCallReportMapper.mapToIvrCallReportTable(dto)).thenReturn(report);
-        when(fullMenuTraversalRepo.save(any(FullMenuTraversal.class))).thenReturn(null);
+    @Test
+    void testFindBynCardnum() {
+        // Setup the expected result
+        FeeWaiverDto expectedResult = new FeeWaiverDto();
+        expectedResult.setAnnualFeeEligible("annualFeeEligible");
+        expectedResult.setCardNum("cardNum");
+        expectedResult.setAnnualFeeRequested("annualFeeRequested");
+        expectedResult.setLateFeeRequested("lateFeeRequested");
+        expectedResult.setLateFeeRequestedDate(LocalDate.now());
+        expectedResult.setAnnualFeeRequestedDate(LocalDate.now());
+        expectedResult.setLateFeeEligible("lateFeeEligible");
 
-        Boolean result = service.insertIvrCallReport(dto);
+        // Configure FeeWaiverRepositoryMY.findById(...)
+        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
+        feeWaiverMY.setNCardnum("cardNum");
+        feeWaiverMY.setFLateFeeEligible("lateFeeEligible");
+        feeWaiverMY.setNAnnualFeeRequested("annualFeeRequested");
+        feeWaiverMY.setDAnnualFeeReqDate(LocalDate.now());
+        feeWaiverMY.setFLateFeeRequested("lateFeeRequested");
+        feeWaiverMY.setDLateFeeReqDate(LocalDate.now());
+        feeWaiverMY.setNAnnualFeeEligible("annualFeeEligible");
+        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
+
+        // Run the test
+        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
+
+        // Verify the results
+        assertThat(result).isEqualToComparingFieldByField(expectedResult);
+    }
+
+    @Test
+    void testFindBynCardnum_FeeWaiverRepositoryMYReturnsAbsent() {
+        // Setup
+        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.empty());
+
+        // Run the test
+        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
+
+        // Verify the results
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void testUpdateFeeWaiver() {
+        // Setup
+        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
+        feeWaiverMY.setNCardnum("cardNum");
+        feeWaiverMY.setFLateFeeEligible("lateFeeEligible");
+        feeWaiverMY.setNAnnualFeeRequested("annualFeeRequested");
+        feeWaiverMY.setDAnnualFeeReqDate(LocalDate.now());
+        feeWaiverMY.setFLateFeeRequested("lateFeeRequested");
+        feeWaiverMY.setDLateFeeReqDate(LocalDate.now());
+        feeWaiverMY.setNAnnualFeeEligible("annualFeeEligible");
+
+        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
+        when(mockFeeWaiverRepository.save(any(FeeWaiverMY.class))).thenReturn(feeWaiverMY);
+
+        // Run the test
+        Boolean result = feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto);
+
+        // Verify the results
+        assertThat(result).isTrue();
+        verify(mockFeeWaiverRepository).findById("cardNum");
+        verify(mockFeeWaiverRepository).save(any(FeeWaiverMY.class));
+    }
+
+    @Test
+    void testUpdateFeeWaiver_FeeWaiverRepositoryMYReturnsAbsent() {
+        // Setup
+        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.empty());
+
+        // Run the test
+        Boolean result = feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto);
+
+        // Verify the results
         assertThat(result).isFalse();
     }
 
     @Test
-    public void testIvrCallReportInsert_withEmptyMenuTraversal() {
-        IvrCallReportDto dto = new IvrCallReportDto();
-        dto.setFullMenuTraversal(new HashMap<>()); // Set empty traversal
-        IvrCallReport report = new IvrCallReport();
+    void testUpdateFeeWaiver_FeeWaiverRepositoryMYSaveThrowsOptimisticLockingFailureException() {
+        // Setup
+        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
+        feeWaiverMY.setNCardnum("cardNum");
+        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
+        when(mockFeeWaiverRepository.save(any(FeeWaiverMY.class))).thenThrow(OptimisticLockingFailureException.class);
 
-        when(ivrCallReportMapper.mapToIvrCallReportTable(dto)).thenReturn(report);
-        when(ivrRepo.save(report)).thenReturn(report);
-        when(fullMenuTraversalRepo.save(any(FullMenuTraversal.class))).thenReturn(menuTraversal);
-
-        Boolean result = service.insertIvrCallReport(dto);
-        assertThat(result).isTrue();
+        // Run the test and verify exception
+        assertThatThrownBy(() -> feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto))
+                .isInstanceOf(OptimisticLockingFailureException.class);
     }
 
     @Test
-    public void testAcdCallReportInsert() {
-        AcdCallReportDto dto = new AcdCallReportDto();
-        AcdCallReport report = new AcdCallReport();
+    void testFindBynCardnum_WithInvalidCardNum() {
+        // Setup: test for invalid card number
+        dto.setCardNum(""); // empty card number
+        when(mockFeeWaiverRepository.findById("")).thenReturn(Optional.empty());
 
-        when(acdCallReportMapper.mapToAcdCallReport(dto)).thenReturn(report);
-        when(acdRepo.save(report)).thenReturn(report);
+        // Run the test
+        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
 
-        Boolean result = service.insertAcdCallReport(dto);
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    public void testAcdCallReportInsert_negative() {
-        AcdCallReportDto dto = new AcdCallReportDto();
-        AcdCallReport report = new AcdCallReport();
-
-        when(acdCallReportMapper.mapToAcdCallReport(dto)).thenReturn(report);
-        when(acdRepo.save(report)).thenReturn(null);
-
-        Boolean result = service.insertAcdCallReport(dto);
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    public void testSetMenusValue_AllMenusPresent() {
-        // Arrange
-        Map<String, String> menus = new HashMap<>();
-        menus.put("Menu1", "Value1");
-        menus.put("Menu2", "Value2");
-        menus.put("Menu3", "Value3");
-        menus.put("Menu4", "Value4");
-        menus.put("Menu5", "Value5");
-        menus.put("Menu6", "Value6");
-
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-
-        // Act
-        service.setMenusValue(menuTraversal, menus);
-
-        // Assert
-        assertEquals("Value1", menuTraversal.getMenu1());
-        assertEquals("Value2", menuTraversal.getMenu2());
-        assertEquals("Value3", menuTraversal.getMenu3());
-        assertEquals("Value4", menuTraversal.getMenu4());
-        assertEquals("Value5", menuTraversal.getMenu5());
-        assertEquals("Value6", menuTraversal.getMenu6());
-    }
-
-    @Test
-    public void testSetMenusValue_PartialMenusPresent() {
-        // Arrange
-        Map<String, String> menus = new HashMap<>();
-        menus.put("Menu1", "Value1");
-        menus.put("Menu2", "Value2");
-
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-
-        // Act
-        service.setMenusValue(menuTraversal, menus);
-
-        // Assert
-        assertEquals("Value1", menuTraversal.getMenu1());
-        assertNull(menuTraversal.getMenu2());
-        assertNull(menuTraversal.getMenu3());
-        assertNull(menuTraversal.getMenu4());
-        assertNull(menuTraversal.getMenu5());
-        assertNull(menuTraversal.getMenu6());
-    }
-
-    @Test
-    public void testSetMenusValue_NoMenusPresent() {
-        // Arrange
-        Map<String, String> menus = new HashMap<>();
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-
-        // Act
-        service.setMenusValue(menuTraversal, menus);
-
-        // Assert
-        assertNull(menuTraversal.getMenu1());
-        assertNull(menuTraversal.getMenu2());
-        assertNull(menuTraversal.getMenu3());
-        assertNull(menuTraversal.getMenu4());
-        assertNull(menuTraversal.getMenu5());
-        assertNull(menuTraversal.getMenu6());
-    }
-
-    @Test
-    public void testSetMenusValue_SomeMenusPresent() {
-        // Arrange
-        Map<String, String> menus = new HashMap<>();
-        menus.put("Menu1", "Value1");
-
-        FullMenuTraversal menuTraversal = new FullMenuTraversal();
-
-        // Act
-        service.setMenusValue(menuTraversal, menus);
-
-        // Assert
-        assertEquals("Value1", menuTraversal.getMenu1());
-        assertNull(menuTraversal.getMenu2());
-        assertNull(menuTraversal.getMenu3());
-        assertNull(menuTraversal.getMenu4());
-        assertNull(menuTraversal.getMenu5());
-        assertNull(menuTraversal.getMenu6());
+        // Verify the result
+        assertThat(result).isNull();
     }
 }
