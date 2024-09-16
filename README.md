@@ -1,132 +1,41 @@
-@ExtendWith(MockitoExtension.class)
-class FeeWaiverServiceImplMYTest {
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.batch.item.file.LineMapper;
 
-    @Mock
-    private FeeWaiverRepositoryMY mockFeeWaiverRepository;
+@Configuration
+public class KycIndicatorsReader {
 
-    @InjectMocks
-    private FeeWaiverServiceImplMY feeWaiverServiceImplMYUnderTest;
-
-    private FeeWaiverDto dto;
-
-    @BeforeEach
-    void setUp() {
-        dto = new FeeWaiverDto();
-        dto.setCardNum("cardNum");
-        dto.setAnnualFeeRequested("annualFeeRequested");
-        dto.setAnnualFeeRequestedDate(LocalDate.now());
-        dto.setLateFeeRequested("lateFeeRequested");
-        dto.setLateFeeRequestedDate(LocalDate.now());
-        dto.setAnnualFeeEligible("annualFeeEligible");
-        dto.setLateFeeEligible("lateFeeEligible");
+    @Bean
+    public FlatFileItemReader<KycIndicatorDTO> kycFileReader() {
+        FlatFileItemReader<KycIndicatorDTO> itemReader = new FlatFileItemReader<>();
+        
+        // Update the file path to point to the new directory on the desktop
+        itemReader.setResource(new FileSystemResource("C:/Users/user/Desktop/CsvReader/kyc_indicators.csv"));
+        itemReader.setName("kycFileReader");
+        itemReader.setLinesToSkip(1);
+        itemReader.setLineMapper(lineMapper());
+        
+        return itemReader;
     }
 
-    @Test
-    void testGetCountryCode() {
-        assertThat(feeWaiverServiceImplMYUnderTest.getCountryCode()).isEqualTo("MY");
-    }
+    public LineMapper<KycIndicatorDTO> lineMapper() {
+        DefaultLineMapper<KycIndicatorDTO> lineMapper = new DefaultLineMapper<>();
 
-    @Test
-    void testFindBynCardnum() {
-        // Setup the expected result
-        FeeWaiverDto expectedResult = new FeeWaiverDto();
-        expectedResult.setAnnualFeeEligible("annualFeeEligible");
-        expectedResult.setCardNum("cardNum");
-        expectedResult.setAnnualFeeRequested("annualFeeRequested");
-        expectedResult.setLateFeeRequested("lateFeeRequested");
-        expectedResult.setLateFeeRequestedDate(LocalDate.now());
-        expectedResult.setAnnualFeeRequestedDate(LocalDate.now());
-        expectedResult.setLateFeeEligible("lateFeeEligible");
+        DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
+        lineTokenizer.setDelimiter(",");
+        lineTokenizer.setStrict(false);
+        lineTokenizer.setNames("relId", "fKycStatus");
 
-        // Configure FeeWaiverRepositoryMY.findById(...)
-        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
-        feeWaiverMY.setNCardnum("cardNum");
-        feeWaiverMY.setFLateFeeEligible("lateFeeEligible");
-        feeWaiverMY.setNAnnualFeeRequested("annualFeeRequested");
-        feeWaiverMY.setDAnnualFeeReqDate(LocalDate.now());
-        feeWaiverMY.setFLateFeeRequested("lateFeeRequested");
-        feeWaiverMY.setDLateFeeReqDate(LocalDate.now());
-        feeWaiverMY.setNAnnualFeeEligible("annualFeeEligible");
-        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
+        BeanWrapperFieldSetMapper<KycIndicatorDTO> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        fieldSetMapper.setTargetType(KycIndicatorDTO.class);
+        lineMapper.setLineTokenizer(lineTokenizer);
+        lineMapper.setFieldSetMapper(fieldSetMapper);
 
-        // Run the test
-        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
-
-        // Verify the results
-        assertThat(result).isEqualToComparingFieldByField(expectedResult);
-    }
-
-    @Test
-    void testFindBynCardnum_FeeWaiverRepositoryMYReturnsAbsent() {
-        // Setup
-        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.empty());
-
-        // Run the test
-        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
-
-        // Verify the results
-        assertThat(result).isNull();
-    }
-
-    @Test
-    void testUpdateFeeWaiver() {
-        // Setup
-        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
-        feeWaiverMY.setNCardnum("cardNum");
-        feeWaiverMY.setFLateFeeEligible("lateFeeEligible");
-        feeWaiverMY.setNAnnualFeeRequested("annualFeeRequested");
-        feeWaiverMY.setDAnnualFeeReqDate(LocalDate.now());
-        feeWaiverMY.setFLateFeeRequested("lateFeeRequested");
-        feeWaiverMY.setDLateFeeReqDate(LocalDate.now());
-        feeWaiverMY.setNAnnualFeeEligible("annualFeeEligible");
-
-        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
-        when(mockFeeWaiverRepository.save(any(FeeWaiverMY.class))).thenReturn(feeWaiverMY);
-
-        // Run the test
-        Boolean result = feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto);
-
-        // Verify the results
-        assertThat(result).isTrue();
-        verify(mockFeeWaiverRepository).findById("cardNum");
-        verify(mockFeeWaiverRepository).save(any(FeeWaiverMY.class));
-    }
-
-    @Test
-    void testUpdateFeeWaiver_FeeWaiverRepositoryMYReturnsAbsent() {
-        // Setup
-        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.empty());
-
-        // Run the test
-        Boolean result = feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto);
-
-        // Verify the results
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    void testUpdateFeeWaiver_FeeWaiverRepositoryMYSaveThrowsOptimisticLockingFailureException() {
-        // Setup
-        FeeWaiverMY feeWaiverMY = new FeeWaiverMY();
-        feeWaiverMY.setNCardnum("cardNum");
-        when(mockFeeWaiverRepository.findById("cardNum")).thenReturn(Optional.of(feeWaiverMY));
-        when(mockFeeWaiverRepository.save(any(FeeWaiverMY.class))).thenThrow(OptimisticLockingFailureException.class);
-
-        // Run the test and verify exception
-        assertThatThrownBy(() -> feeWaiverServiceImplMYUnderTest.updateFeeWaiver(dto))
-                .isInstanceOf(OptimisticLockingFailureException.class);
-    }
-
-    @Test
-    void testFindBynCardnum_WithInvalidCardNum() {
-        // Setup: test for invalid card number
-        dto.setCardNum(""); // empty card number
-        when(mockFeeWaiverRepository.findById("")).thenReturn(Optional.empty());
-
-        // Run the test
-        FeeWaiverDto result = feeWaiverServiceImplMYUnderTest.findBynCardnum(dto);
-
-        // Verify the result
-        assertThat(result).isNull();
+        return lineMapper;
     }
 }
